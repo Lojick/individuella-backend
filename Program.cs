@@ -1,41 +1,38 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.MapOpenApi();
-}
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.UseHttpsRedirection();
+        builder.Services.AddControllers();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+        );
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+        builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
 
-app.Run();
+        // 🔐 Här aktiveras både Identity och inbyggda endpoints (/register, /login)
+        builder
+            .Services.AddIdentityCore<ApplicationUser>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddApiEndpoints();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        var app = builder.Build();
+        // Aktiverar /register, /login, /logout osv.
+        app.MapIdentityApi<ApplicationUser>();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // Aktiverar dina egna controllers, t.ex. /api/admin/users
+        app.MapControllers();
+
+        app.Run();
+    }
 }

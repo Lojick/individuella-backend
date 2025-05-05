@@ -65,6 +65,9 @@ artifacts/
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
+# Protect connectionstring
+appsettings.json
+
 # StyleCop
 StyleCopReport.xml
 
