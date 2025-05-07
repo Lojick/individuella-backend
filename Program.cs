@@ -17,11 +17,14 @@ public class Program
 
         builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
 
-        // 🔐 Här aktiveras både Identity och inbyggda endpoints (/register, /login)
+        //  Här aktiveras både Identity och inbyggda endpoints (/register, /login)
         builder
             .Services.AddIdentityCore<ApplicationUser>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddApiEndpoints();
+
+        builder.Services.AddScoped<FolderRepository>();
+        builder.Services.AddScoped<FolderService>();
 
         var app = builder.Build();
         // Aktiverar /register, /login, /logout osv.
