@@ -17,6 +17,7 @@ public class FolderController : ControllerBase
     [Authorize]
     public async Task<ActionResult> AddAsync([FromBody] CreateFolderDto dto)
     {
+        //Hämtar den inloggade användarens ID från tokenen
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userId))
@@ -27,7 +28,7 @@ public class FolderController : ControllerBase
         return Ok(folder);
     }
 
-    [HttpGet("get")]
+    [HttpGet("getfolders")]
     [Authorize]
     public async Task<ActionResult> GetAsync()
     {
@@ -37,7 +38,13 @@ public class FolderController : ControllerBase
         {
             return Unauthorized();
         }
-        var folders = await service.GetAsync(userId);
-        return Ok(folders);
+
+        var folder = await service.GetAsync(userId);
+
+        if (folder == null)
+        {
+            return NotFound();
+        }
+        return Ok(folder);
     }
 }
