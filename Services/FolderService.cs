@@ -7,11 +7,8 @@ public class FolderService
         this.repository = repository;
     }
 
-    public async Task<Folder> AddAsync(CreateFolderDto dto, string userId)
+    public async Task<FolderDto> AddAsync(CreateFolderDto dto, string userId)
     {
-        //Omvandla till en Folder objekt med den datan som angavs  i DTO-objektet.
-        var folder = new Folder { Name = dto.Name, UserId = userId };
-
         if (string.IsNullOrEmpty(dto.Name))
         {
             throw new ArgumentException("Folder does not have a name.");
@@ -21,7 +18,14 @@ public class FolderService
             throw new ArgumentException("Userid is missing.");
         }
 
-        return await repository.AddAsync(folder);
+        //Omvandla till en Folder objekt med den datan som angavs  i DTO-objektet.
+        var folder = new Folder { Name = dto.Name, UserId = userId };
+
+        //Skicka sedan in objektet till databasen
+        var savedFolder = await repository.AddAsync(folder);
+
+        //Överför tillbaka till DTO och returnera till klienten
+        return new FolderDto { Id = savedFolder.Id, Name = savedFolder.Name };
     }
 
     public async Task<IEnumerable<FolderDto>> GetAsync(string userId)
