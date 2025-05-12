@@ -17,8 +17,24 @@ public class FileRepository
         return file;
     }
 
+    public async Task<FileItem?> GetFileByIdAsync(int fileId)
+    {
+        return await context.Files.FirstOrDefaultAsync(f => f.Id == fileId);
+    }
+
     public async Task<Folder?> GetFolderByIdAsync(int folderId)
     {
         return await context.Folders.FirstOrDefaultAsync(f => f.Id == folderId);
+    }
+
+    public async Task<FileItem?> DownloadFileByIdAsync(int fileId)
+    {
+        return await context.Files.FirstOrDefaultAsync(f => f.Id == fileId);
+    }
+
+    public async Task DeleteFileAsync(FileItem file)
+    {
+        context.Files.Remove(file);
+        await context.SaveChangesAsync();
     }
 }

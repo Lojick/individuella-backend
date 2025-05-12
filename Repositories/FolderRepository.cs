@@ -16,9 +16,13 @@ public class FolderRepository
         return folder;
     }
 
-    public async Task<IEnumerable<Folder>> GetAsync(string userId)
+    public async Task<IEnumerable<Folder>> GetFoldersWithFilesAsync(string userId)
     {
-        var folders = await context.Folders.Where(f => f.UserId == userId).ToListAsync();
+        //Slår ihop både Folder och FileItem tabellerna tillsamans.
+        var folders = await context
+            .Folders.Include(f => f.Files)
+            .Where(f => f.UserId == userId)
+            .ToListAsync();
         return folders;
     }
 }
