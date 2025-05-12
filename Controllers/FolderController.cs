@@ -23,10 +23,18 @@ public class FolderController : ControllerBase
 
         if (string.IsNullOrEmpty(userId))
         {
-            return Unauthorized();
+            return Unauthorized("Userid is missing.");
         }
-        var folder = await service.AddFolderAsync(dto, userId);
-        return Ok(folder);
+
+        try
+        {
+            var folder = await service.AddFolderAsync(dto, userId);
+            return Ok(folder);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     //Endpoint för att hämta mappar och dess innehåll (filer)
@@ -38,7 +46,7 @@ public class FolderController : ControllerBase
 
         if (string.IsNullOrEmpty(userId))
         {
-            return Unauthorized();
+            return Unauthorized("Userid is missing.");
         }
 
         var folder = await service.GetFoldersWithFilesAsync(userId);

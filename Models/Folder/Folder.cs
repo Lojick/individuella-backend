@@ -1,3 +1,4 @@
+//Databas-tabell för mappar
 public class Folder
 {
     public int Id { get; set; }

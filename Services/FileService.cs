@@ -7,7 +7,7 @@ public class FileService
         this.repository = repository;
     }
 
-    public async Task<FileDto> UploadFileAsync(IFormFile file, int folderId, string userId)
+    public async Task<FileDto> UploadFileByIdAsync(IFormFile file, int folderId, string userId)
     {
         if (file == null || file.Length == 0)
         {
@@ -20,10 +20,6 @@ public class FileService
         if (folderId <= 0)
         {
             throw new ArgumentException("File must belong to a folder.");
-        }
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ArgumentException("Userid is missing.");
         }
 
         using var memoryStream = new MemoryStream();
@@ -61,12 +57,6 @@ public class FileService
 
     public async Task<FileDto> DownloadFileByIdAsync(string userId, int fileId)
     {
-        //Kontrollera att userId inte är tomt
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ArgumentException("Userid is missing.");
-        }
-
         //Hämta filen från databasen
         var file = await repository.DownloadFileByIdAsync(fileId);
 
@@ -93,12 +83,6 @@ public class FileService
 
     public async Task<bool> DeleteFileByIdAsync(string userId, int fileId)
     {
-        //Kontrollera att userId inte är tomt
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ArgumentException("Userid is missing.");
-        }
-
         //Hämta fil från databasen
         var file = await repository.GetFileByIdAsync(fileId);
 

@@ -1,3 +1,4 @@
+//DTO-hjälpklass när man ska göra .Include på både mapp och filer.
 public class FolderWithFilesDto
 {
     public int Id { get; set; }

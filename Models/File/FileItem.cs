@@ -1,3 +1,4 @@
+//Databas-tabell för filer
 public class FileItem
 {
     public int Id { get; set; }

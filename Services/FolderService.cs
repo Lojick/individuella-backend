@@ -14,11 +14,6 @@ public class FolderService
         {
             throw new ArgumentException("Folder does not have a name.");
         }
-        //Kontrollerar att userId inte är tomt.
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ArgumentException("Userid is missing.");
-        }
 
         //Omvandla till en Folder objekt med den datan som angavs  i DTO-objektet.
         var folder = new Folder { Name = dto.Name, UserId = userId };
@@ -32,12 +27,6 @@ public class FolderService
 
     public async Task<IEnumerable<FolderWithFilesDto>> GetFoldersWithFilesAsync(string userId)
     {
-        //Kontrollerar att userId inte är tomt.
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ArgumentException("Userid is missing.");
-        }
-
         var folders = await repository.GetFoldersWithFilesAsync(userId);
 
         //Om inga mappar hittas eller om det inte finns några element i listan, returnera en tom lista.

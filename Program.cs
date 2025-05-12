@@ -23,8 +23,9 @@ public class Program
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddApiEndpoints();
 
-        builder.Services.AddScoped<FolderRepository>();
+        //Här aktiveras alla services och repositories för Folder och File tabellerna.
         builder.Services.AddScoped<FolderService>();
+        builder.Services.AddScoped<FolderRepository>();
         builder.Services.AddScoped<FileService>();
         builder.Services.AddScoped<FileRepository>();
         // builder

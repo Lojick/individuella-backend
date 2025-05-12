@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
+//Databas-tabell för användare (skapas automatiskt av Identity Core)
 public class ApplicationUser : IdentityUser
 {
     // En användare kan ha flera mappar och filer
