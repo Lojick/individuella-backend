@@ -7,29 +7,37 @@ public class FolderService
         this.repository = repository;
     }
 
+    /// <summary>
+    /// Skapar en ny mapp för en specifik användare.
+    /// </summary>
+    /// <param name="dto">Objekt som innehåller information om mappen, t.ex. namn.</param>
+    /// <param name="userId">ID för den inloggade användaren som äger mappen.</param>
+    /// <returns>En DTO som representerar den skapade mappen, inklusive ID och namn.</returns>
     public async Task<FolderDto> AddFolderAsync(CreateFolderDto dto, string userId)
     {
-        //Kontrollerar om det angavs ett namn för mappen.
         if (string.IsNullOrEmpty(dto.Name))
         {
-            throw new ArgumentException("Folder does not have a name.");
+            throw new ArgumentException("Folder must have a name.");
         }
 
-        //Omvandla till en Folder objekt med den datan som angavs  i DTO-objektet.
+        //Omvandla till en Folder objekt med den datan som angavs i DTO-objektet.
         var folder = new Folder { Name = dto.Name, UserId = userId };
 
         //Skicka sedan in objektet till databasen
         var savedFolder = await repository.AddFolderAsync(folder);
 
-        //Överför tillbaka till DTO och returnera till klienten
         return new FolderDto { Id = savedFolder.Id, Name = savedFolder.Name };
     }
 
+    /// <summary>
+    /// Hämtar mappar med filer för en specifik användare.
+    /// </summary>
+    /// <param name="userId">ID för den inloggade användaren som äger mapparna.</param>
+    /// <returns>En lista med mappar och deras filer, eller en tom lista om inga hittas.</returns>
     public async Task<IEnumerable<FolderWithFilesDto>> GetFoldersWithFilesAsync(string userId)
     {
         var folders = await repository.GetFoldersWithFilesAsync(userId);
 
-        //Om inga mappar hittas eller om det inte finns några element i listan, returnera en tom lista.
         if (folders == null || !folders.Any())
         {
             return Enumerable.Empty<FolderWithFilesDto>();
