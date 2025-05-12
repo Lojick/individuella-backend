@@ -9,7 +9,7 @@ public class FolderRepository
         this.context = context;
     }
 
-    public async Task<Folder> AddAsync(Folder folder)
+    public async Task<Folder> AddFolderAsync(Folder folder)
     {
         context.Folders.Add(folder);
         await context.SaveChangesAsync();

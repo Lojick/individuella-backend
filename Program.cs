@@ -27,12 +27,12 @@ public class Program
         builder.Services.AddScoped<FolderService>();
         builder.Services.AddScoped<FileService>();
         builder.Services.AddScoped<FileRepository>();
-        builder
-            .Services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new ByteArrayConverter());
-            });
+        // builder
+        //     .Services.AddControllers()
+        //     .AddJsonOptions(options =>
+        //     {
+        //         options.JsonSerializerOptions.Converters.Add(new ByteArrayConverter());
+        //     });
 
         var app = builder.Build();
         // Aktiverar /register, /login, /logout osv.

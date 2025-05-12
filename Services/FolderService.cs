@@ -7,7 +7,7 @@ public class FolderService
         this.repository = repository;
     }
 
-    public async Task<FolderDto> AddAsync(CreateFolderDto dto, string userId)
+    public async Task<FolderDto> AddFolderAsync(CreateFolderDto dto, string userId)
     {
         //Kontrollerar om det angavs ett namn för mappen.
         if (string.IsNullOrEmpty(dto.Name))
@@ -24,7 +24,7 @@ public class FolderService
         var folder = new Folder { Name = dto.Name, UserId = userId };
 
         //Skicka sedan in objektet till databasen
-        var savedFolder = await repository.AddAsync(folder);
+        var savedFolder = await repository.AddFolderAsync(folder);
 
         //Överför tillbaka till DTO och returnera till klienten
         return new FolderDto { Id = savedFolder.Id, Name = savedFolder.Name };

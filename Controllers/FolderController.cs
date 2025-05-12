@@ -13,10 +13,10 @@ public class FolderController : ControllerBase
         this.service = service;
     }
 
-    [HttpPost("add")]
+    [HttpPost("addfiles")]
     [Authorize]
     //Endpoint för att skapa mappar
-    public async Task<ActionResult> AddAsync([FromBody] CreateFolderDto dto)
+    public async Task<ActionResult> AddFolderAsync([FromBody] CreateFolderDto dto)
     {
         //Hämtar den inloggade användarens ID från tokenen
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -25,7 +25,7 @@ public class FolderController : ControllerBase
         {
             return Unauthorized();
         }
-        var folder = await service.AddAsync(dto, userId);
+        var folder = await service.AddFolderAsync(dto, userId);
         return Ok(folder);
     }
 

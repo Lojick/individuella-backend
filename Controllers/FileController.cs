@@ -13,9 +13,9 @@ public class FileController : ControllerBase
         this.service = service;
     }
 
-    [HttpPost("add")]
+    [HttpPost("uploadfile")]
     [Authorize]
-    public async Task<ActionResult> AddAsync([FromBody] CreateFileDto dto)
+    public async Task<ActionResult> UploadFileAsync(IFormFile file, [FromForm] int folderId)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -23,9 +23,19 @@ public class FileController : ControllerBase
         {
             return Unauthorized();
         }
-
-        var file = await service.AddAsync(dto, userId);
-        return Ok(file);
+        try
+        {
+            var uploadedFile = await service.UploadFileAsync(file, folderId, userId);
+            return Ok(uploadedFile);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return NotFound("You cannot save files into this folder.");
+        }
     }
 
     [HttpGet("download/{fileid}")]

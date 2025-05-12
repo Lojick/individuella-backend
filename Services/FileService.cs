@@ -7,13 +7,17 @@ public class FileService
         this.repository = repository;
     }
 
-    public async Task<FileDto> AddAsync(CreateFileDto dto, string userId)
+    public async Task<FileDto> UploadFileAsync(IFormFile file, int folderId, string userId)
     {
-        if (string.IsNullOrEmpty(dto.FileName))
+        if (file == null || file.Length == 0)
+        {
+            throw new ArgumentException("Ingen fil uppladdad.");
+        }
+        if (string.IsNullOrEmpty(file.FileName))
         {
             throw new ArgumentException("File does not have a name.");
         }
-        if (dto.FolderId <= 0)
+        if (folderId <= 0)
         {
             throw new ArgumentException("File must belong to a folder.");
         }
@@ -22,8 +26,12 @@ public class FileService
             throw new ArgumentException("Userid is missing.");
         }
 
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        var content = memoryStream.ToArray();
+
         //Kontrollera om mappen tillhör användaren
-        var folder = await repository.GetFolderByIdAsync(dto.FolderId);
+        var folder = await repository.GetFolderByIdAsync(folderId);
 
         if (folder == null || folder.UserId != userId)
         {
@@ -31,19 +39,24 @@ public class FileService
         }
 
         //Överför till FileItem objekt med DTO inputen från tidigare
-        var file = new FileItem
+        var newFile = new FileItem
         {
-            FileName = dto.FileName,
-            Content = dto.Content,
-            FolderId = dto.FolderId,
+            FileName = file.FileName,
+            Content = content,
+            FolderId = folderId,
             UserId = userId,
         };
 
         //Spara filen i databasen
-        var savedFile = await repository.AddAsync(file);
+        var savedFile = await repository.UploadFileAsync(newFile);
 
         //Konvertera tillbaka till DTO och returnera den till klienten
-        return new FileDto { FileName = savedFile.FileName, Id = savedFile.Id };
+        return new FileDto
+        {
+            FileName = savedFile.FileName,
+            Id = savedFile.Id,
+            Content = savedFile.Content,
+        };
     }
 
     public async Task<FileDto> DownloadFileByIdAsync(string userId, int fileId)

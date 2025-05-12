@@ -10,7 +10,7 @@ public class FileRepository
         this.context = context;
     }
 
-    public async Task<FileItem> AddAsync(FileItem file)
+    public async Task<FileItem> UploadFileAsync(FileItem file)
     {
         context.Files.Add(file);
         await context.SaveChangesAsync();
