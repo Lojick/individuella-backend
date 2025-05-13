@@ -13,7 +13,7 @@ public class FolderController : ControllerBase
         this.service = service;
     }
 
-    [HttpPost("addfiles")]
+    [HttpPost("addfolder")]
     [Authorize]
     //Endpoint för att skapa mappar
     public async Task<ActionResult> AddFolderAsync([FromBody] CreateFolderDto dto)
