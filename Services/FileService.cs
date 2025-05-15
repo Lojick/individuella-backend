@@ -14,13 +14,13 @@ public class FileService
     /// <param name="folderId">ID för mappen där filen ska sparas.</param>
     /// <param name="userId">ID för den inloggade användaren som äger mappen.</param>
     /// <returns>En DTO som innehåller information om den sparade filen, inklusive namn, ID och innehåll.</returns>
-    /// <exception cref="ArgumentException">Kastas om filen saknas, om filnamn saknas, eller om inget giltigt mapp-ID anges.</exception>
+    /// <exception cref="ArgumentException">Kastas om filen saknas, om filen är tom, om filnamn saknas, eller om inget giltigt mapp-ID anges.</exception>
     /// <exception cref="UnauthorizedAccessException">Kastas om användaren försöker ladda upp en fil till en mapp som inte tillhör dem.</exception>
     public async Task<FileDto> UploadFileByIdAsync(IFormFile file, int folderId, string userId)
     {
         if (file == null || file.Length == 0)
         {
-            throw new ArgumentException("No file was uploaded.");
+            throw new ArgumentException("File is missing or empty.");
         }
         if (string.IsNullOrEmpty(file.FileName))
         {
@@ -73,15 +73,28 @@ public class FileService
     /// <param name="userId">ID för den inloggade användaren som äger filen.</param>
     /// <param name="fileId">ID för filen som ska laddas ner. </param>
     /// <returns>En DTO som innehåller information om den nedladdade filen, inklusive namn, ID och innehåll.</returns>
+    /// <exception cref="ArgumentException">Kastas om filen har ogiltigt file ID..</exception>
+    /// <exception cref="FileNotFoundException">Kastas om filen inte existerar.</exception>
     /// <exception cref="UnauthorizedAccessException">Kastas om användaren försöker ladda ner en fil som inte tillhör dem.</exception>
     /// <exception cref="InvalidOperationException">Kastas om filen saknar innehåll.</exception>
     public async Task<FileDto> DownloadFileByIdAsync(string userId, int fileId)
     {
+        //Kontrollera att fileId är giltigt
+        if (fileId <= 0)
+        {
+            throw new ArgumentException("Invalid file ID.");
+        }
+
         //Hämta filen från databas för kontroll.
         var file = await repository.DownloadFileByIdAsync(fileId);
 
-        //Kontrollera att filen inte är tom eller om den tillhör användaren.
-        if (file == null || file.UserId != userId)
+        //Kontrollera att filen existerar
+        if (file == null)
+        {
+            throw new FileNotFoundException("File could not be found.");
+        }
+        //Kontrollera att filen tillhör användaren
+        if (file.UserId != userId)
         {
             throw new UnauthorizedAccessException("You are not allowed to download this file.");
         }
@@ -107,10 +120,17 @@ public class FileService
     /// <param name="userId">ID för den inloggade användaren som äger filen.</param>
     /// <param name="fileId">ID för filen som ska raderas.</param>
     /// <returns>True om raderingen lyckades.</returns>
+    /// <exception cref="ArgumentException">Kastas om filen har ogiltigt file ID.</exception>
     /// <exception cref="FileNotFoundException">Kastas om filen inte kunde hittas i databasen.</exception>
     /// <exception cref="UnauthorizedAccessException">Kastas om användaren försöker radera en fil som inte tillhör dem.</exception>
     public async Task<bool> DeleteFileByIdAsync(string userId, int fileId)
     {
+        //Kontrollera att fileId är giltigt
+        if (fileId <= 0)
+        {
+            throw new ArgumentException("Invalid file ID.");
+        }
+
         //Hämta fil från databasen för kontroll.
         var file = await repository.GetFileByIdAsync(fileId);
 

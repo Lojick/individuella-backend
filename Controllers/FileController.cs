@@ -37,7 +37,7 @@ public class FileController : ControllerBase
         }
         catch (UnauthorizedAccessException ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(403, ex.Message);
         }
     }
 
@@ -61,13 +61,21 @@ public class FileController : ControllerBase
             // Innehållet (byte[]), filtypen och filnamnet skickas med så att klienten kan spara filen.
             return File(file.Content, "application/octet-stream", file.FileName);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (FileNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, ex.Message);
+        }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(403, ex.Message);
         }
     }
 
@@ -88,13 +96,17 @@ public class FileController : ControllerBase
             await service.DeleteFileByIdAsync(userId, fileId);
             return NoContent(); // 204 - lyckad radering utan innehåll
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
         catch (FileNotFoundException ex)
         {
             return NotFound(ex.Message);
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Forbid(ex.Message);
+            return StatusCode(403, ex.Message);
         }
     }
 }
