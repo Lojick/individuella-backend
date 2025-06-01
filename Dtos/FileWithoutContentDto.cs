@@ -1,4 +1,4 @@
-//DTO-hjälpklass när man ska skicka tillbaka objektet som HTTP-respons
+//DTO-hjälpklass för att utesluta filinnehåll i mapp-respons
 public class FileWithoutContentDto
 {
     public int Id { get; set; }
