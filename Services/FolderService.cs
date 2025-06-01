@@ -49,7 +49,11 @@ public class FolderService
             Id = f.Id,
             Name = f.Name,
             Files = f
-                .Files.Select(file => new FileDto { Id = file.Id, FileName = file.FileName })
+                .Files.Select(file => new FileWithoutContentDto
+                {
+                    Id = file.Id,
+                    FileName = file.FileName,
+                })
                 .ToList(),
         });
     }
