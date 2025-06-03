@@ -113,7 +113,6 @@ public class FileService
     /// </summary>
     /// <param name="userId">ID för den inloggade användaren som äger filen.</param>
     /// <param name="fileId">ID för filen som ska raderas.</param>
-    /// <returns>True om raderingen lyckades.</returns>
     /// <exception cref="ArgumentException">Kastas om filen har ogiltigt file ID.</exception>
     /// <exception cref="FileNotFoundException">Kastas om filen inte kunde hittas i databasen.</exception>
     /// <exception cref="UnauthorizedAccessException">Kastas om användaren försöker radera en fil som inte tillhör dem.</exception>
