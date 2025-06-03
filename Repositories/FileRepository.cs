@@ -27,9 +27,9 @@ public class FileRepository
         return await context.Folders.FirstOrDefaultAsync(f => f.Id == folderId);
     }
 
-    public async Task<FileItem?> DownloadFileByIdAsync(int fileId)
+    public async Task<FileItem?> DownloadFileByIdAsync(int fileId, string userId)
     {
-        return await context.Files.FirstOrDefaultAsync(f => f.Id == fileId);
+        return await context.Files.FirstOrDefaultAsync(f => f.Id == fileId && f.UserId == userId);
     }
 
     public async Task DeleteFileAsync(FileItem file)

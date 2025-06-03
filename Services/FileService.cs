@@ -75,7 +75,6 @@ public class FileService
     /// <returns>En DTO som innehåller information om den nedladdade filen, inklusive namn, ID och innehåll.</returns>
     /// <exception cref="ArgumentException">Kastas om filen har ogiltigt file ID..</exception>
     /// <exception cref="FileNotFoundException">Kastas om filen inte existerar.</exception>
-    /// <exception cref="UnauthorizedAccessException">Kastas om användaren försöker ladda ner en fil som inte tillhör dem.</exception>
     /// <exception cref="InvalidOperationException">Kastas om filen saknar innehåll.</exception>
     public async Task<FileDto> DownloadFileByIdAsync(string userId, int fileId)
     {
@@ -86,17 +85,12 @@ public class FileService
         }
 
         //Hämta filen från databas för kontroll.
-        var file = await repository.DownloadFileByIdAsync(fileId);
+        var file = await repository.DownloadFileByIdAsync(fileId, userId);
 
         //Kontrollera att filen existerar
         if (file == null)
         {
             throw new FileNotFoundException("File could not be found.");
-        }
-        //Kontrollera att filen tillhör användaren
-        if (file.UserId != userId)
-        {
-            throw new UnauthorizedAccessException("You are not allowed to download this file.");
         }
 
         //Kontrollera att filens innehåll inte är tom.
@@ -123,7 +117,7 @@ public class FileService
     /// <exception cref="ArgumentException">Kastas om filen har ogiltigt file ID.</exception>
     /// <exception cref="FileNotFoundException">Kastas om filen inte kunde hittas i databasen.</exception>
     /// <exception cref="UnauthorizedAccessException">Kastas om användaren försöker radera en fil som inte tillhör dem.</exception>
-    public async Task<bool> DeleteFileByIdAsync(string userId, int fileId)
+    public async Task DeleteFileByIdAsync(string userId, int fileId)
     {
         //Kontrollera att fileId är giltigt
         if (fileId <= 0)
@@ -148,6 +142,5 @@ public class FileService
 
         //Tar bort filen och returnerar true (Att den gick igenom)
         await repository.DeleteFileAsync(file);
-        return true;
     }
 }

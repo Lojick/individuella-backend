@@ -69,10 +69,6 @@ public class FileController : ControllerBase
         {
             return NotFound(ex.Message);
         }
-        catch (UnauthorizedAccessException ex)
-        {
-            return StatusCode(403, ex.Message);
-        }
         catch (InvalidOperationException ex)
         {
             return StatusCode(403, ex.Message);
